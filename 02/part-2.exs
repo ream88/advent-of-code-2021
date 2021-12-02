@@ -1,9 +1,7 @@
-[file] = System.argv()
+Code.compile_file("../advent_of_code_2021.ex")
 
 {horizontal, depth, _aim} =
-  file
-  |> File.stream!()
-  |> Stream.map(&String.trim(&1))
+  AdventOfCode2021.stream_input_file()
   |> Enum.reduce({0, 0, 0}, fn input, {horizontal, depth, aim} ->
     [command, value] = String.split(input, " ")
     value = String.to_integer(value)
