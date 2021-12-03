@@ -8,7 +8,7 @@ defmodule Day03.Part1 do
   end
 end
 
-most_common =
+frequencies =
   AdventOfCode2021.stream_input_file()
   |> Enum.map(fn line ->
     line
@@ -16,28 +16,18 @@ most_common =
     |> Enum.map(&String.to_integer/1)
   end)
   |> Day03.Part1.transpose()
-  |> Enum.map(fn line ->
-    line
-    |> Enum.reduce({0, 0}, fn
-      0, {zeros, ones} -> {zeros + 1, ones}
-      1, {zeros, ones} -> {zeros, ones + 1}
-    end)
-  end)
+  |> Enum.map(&Enum.frequencies(&1))
 
 gamma =
-  most_common
-  |> Enum.map(fn {zeros, ones} ->
-    if zeros > ones, do: 0, else: 1
-  end)
+  frequencies
+  |> Enum.map(fn column -> column |> Enum.max_by(&elem(&1, 1)) |> elem(0) end)
   |> Enum.join()
   |> String.to_integer(2)
   |> IO.inspect(label: "gamma")
 
 epsilon =
-  most_common
-  |> Enum.map(fn {zeros, ones} ->
-    if zeros > ones, do: 1, else: 0
-  end)
+  frequencies
+  |> Enum.map(fn column -> column |> Enum.min_by(&elem(&1, 1)) |> elem(0) end)
   |> Enum.join()
   |> String.to_integer(2)
   |> IO.inspect(label: "epsilon")
