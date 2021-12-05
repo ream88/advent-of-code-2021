@@ -3,11 +3,11 @@ Code.require_file("../advent_of_code_2021.ex")
 defmodule Day05.Part1 do
   def draw(field, [x1, y1, x2, y2]) do
     for x <- x1..x2, y <- y1..y2 do
-      [y, x]
+      [x, y]
     end
     |> Enum.reduce(field, fn [x, y], field ->
-      List.update_at(field, x, fn column ->
-        List.update_at(column, y, &(&1 + 1))
+      List.update_at(field, y, fn row ->
+        List.update_at(row, x, &(&1 + 1))
       end)
     end)
   end
