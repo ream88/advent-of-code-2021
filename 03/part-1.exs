@@ -1,33 +1,48 @@
 Code.compile_file("../advent_of_code_2021.ex")
 
 defmodule Day03.Part1 do
-  def transpose(rows) do
-    rows
-    |> List.zip()
-    |> Enum.map(&Tuple.to_list/1)
+  def most_occurring(numbers, position) do
+    {zeros, ones} = frequencies(numbers, position)
+    if zeros > ones, do: 0, else: 1
+  end
+
+  def least_occurring(numbers, position) do
+    {zeros, ones} = frequencies(numbers, position)
+    if zeros < ones, do: 0, else: 1
+  end
+
+  defp frequencies(numbers, position) do
+    numbers
+    |> Enum.map(&Enum.at(&1, position))
+    |> Enum.frequencies()
+    |> Map.values()
+    |> List.to_tuple()
   end
 end
 
-frequencies =
+numbers =
   AdventOfCode2021.stream_input_file()
-  |> Enum.map(fn line ->
+  |> Stream.map(fn line ->
     line
     |> String.codepoints()
     |> Enum.map(&String.to_integer/1)
   end)
-  |> Day03.Part1.transpose()
-  |> Enum.map(&Enum.frequencies(&1))
+
+length =
+  numbers
+  |> Enum.at(0)
+  |> length()
 
 gamma =
-  frequencies
-  |> Enum.map(fn column -> column |> Enum.max_by(&elem(&1, 1)) |> elem(0) end)
+  0..(length - 1)
+  |> Enum.map(&Day03.Part1.most_occurring(numbers, &1))
   |> Enum.join()
   |> String.to_integer(2)
   |> IO.inspect(label: "gamma")
 
 epsilon =
-  frequencies
-  |> Enum.map(fn column -> column |> Enum.min_by(&elem(&1, 1)) |> elem(0) end)
+  0..(length - 1)
+  |> Enum.map(&Day03.Part1.least_occurring(numbers, &1))
   |> Enum.join()
   |> String.to_integer(2)
   |> IO.inspect(label: "epsilon")
