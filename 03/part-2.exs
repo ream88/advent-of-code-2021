@@ -1,54 +1,34 @@
 Code.compile_file("../advent_of_code_2021.ex")
 
 defmodule Day03.Part2 do
-  def transpose(rows) do
-    rows
-    |> List.zip()
-    |> Enum.map(&Tuple.to_list/1)
+  def o2(numbers, position) do
+    filter(numbers, position, &>=/2)
   end
 
-  def filter_numbers_with_higher_frequency(numbers, position) do
-    frequencies =
-      numbers
-      |> Day03.Part2.transpose()
-      |> Enum.map(&Enum.frequencies(&1))
-
-    criteria =
-      frequencies
-      |> Enum.map(fn
-        %{0 => zeros, 1 => ones} when zeros > ones -> 0
-        %{0 => zeros, 1 => ones} when zeros <= ones -> 1
-        %{1 => _} -> 1
-        %{0 => _} -> 0
-      end)
-
-    numbers
-    |> Enum.filter(&(Enum.at(&1, position) == Enum.at(criteria, position)))
+  def co2(numbers, position) do
+    filter(numbers, position, &</2)
   end
 
-  def filter_numbers_with_lower_frequency(numbers, position) do
-    frequencies =
-      numbers
-      |> Day03.Part2.transpose()
-      |> Enum.map(&Enum.frequencies(&1))
-
-    criteria =
-      frequencies
-      |> Enum.map(fn
-        %{0 => zeros, 1 => ones} when zeros > ones -> 1
-        %{0 => zeros, 1 => ones} when zeros <= ones -> 0
-        %{1 => _} -> 1
-        %{0 => _} -> 0
-      end)
+  defp filter(numbers, position, fun) do
+    {zeros, ones} = frequencies(numbers, position)
+    criteria = if fun.(ones, zeros), do: 1, else: 0
 
     numbers
-    |> Enum.filter(&(Enum.at(&1, position) == Enum.at(criteria, position)))
+    |> Enum.filter(&(Enum.at(&1, position) == criteria))
+  end
+
+  defp frequencies(numbers, position) do
+    numbers
+    |> Enum.map(&Enum.at(&1, position))
+    |> Enum.frequencies()
+    |> Map.values()
+    |> List.to_tuple()
   end
 end
 
 numbers =
   AdventOfCode2021.stream_input_file()
-  |> Enum.map(fn line ->
+  |> Stream.map(fn line ->
     line
     |> String.codepoints()
     |> Enum.map(&String.to_integer/1)
@@ -61,20 +41,24 @@ length =
 
 oxygen_generator_rating =
   0..length
-  |> Enum.reduce(numbers, fn position, numbers ->
-    Day03.Part2.filter_numbers_with_higher_frequency(numbers, position)
+  |> Enum.reduce_while(numbers, fn position, numbers ->
+    case Day03.Part2.o2(numbers, position) do
+      [number] -> {:halt, number}
+      numbers -> {:cont, numbers}
+    end
   end)
-  |> Enum.at(0)
   |> Enum.join()
   |> String.to_integer(2)
   |> IO.inspect(label: "oxygen_generator_rating")
 
 co2_scrubber_rating =
   0..length
-  |> Enum.reduce(numbers, fn position, numbers ->
-    Day03.Part2.filter_numbers_with_lower_frequency(numbers, position)
+  |> Enum.reduce_while(numbers, fn position, numbers ->
+    case Day03.Part2.co2(numbers, position) do
+      [number] -> {:halt, number}
+      numbers -> {:cont, numbers}
+    end
   end)
-  |> Enum.at(0)
   |> Enum.join()
   |> String.to_integer(2)
   |> IO.inspect(label: "co2_scrubber_rating")
