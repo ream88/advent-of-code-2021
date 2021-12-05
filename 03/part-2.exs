@@ -19,7 +19,7 @@ defmodule Day03.Part2 do
 
   defp frequencies(numbers, position) do
     numbers
-    |> Enum.map(&Enum.at(&1, position))
+    |> Stream.map(&Enum.at(&1, position))
     |> Enum.frequencies()
     |> Map.values()
     |> List.to_tuple()
@@ -40,7 +40,7 @@ length =
   |> length()
 
 oxygen_generator_rating =
-  0..length
+  0..(length - 1)
   |> Enum.reduce_while(numbers, fn position, numbers ->
     case Day03.Part2.o2(numbers, position) do
       [number] -> {:halt, number}
@@ -52,7 +52,7 @@ oxygen_generator_rating =
   |> IO.inspect(label: "oxygen_generator_rating")
 
 co2_scrubber_rating =
-  0..length
+  0..(length - 1)
   |> Enum.reduce_while(numbers, fn position, numbers ->
     case Day03.Part2.co2(numbers, position) do
       [number] -> {:halt, number}
