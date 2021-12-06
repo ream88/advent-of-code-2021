@@ -1,17 +1,11 @@
 Code.require_file("../advent_of_code_2021.ex")
 
 defmodule Day05.Part2 do
-  defp is_straight?([x1, y1, x2, y2]) do
-    x1 == x2 || y1 == y2
-  end
-
-  def draw(field, [x1, y1, x2, y2] = line) do
-    if is_straight?(line) do
-      for x <- x1..x2, y <- y1..y2 do
-        {x, y}
-      end
-    else
-      Enum.zip(x1..x2, y1..y2)
+  def draw(field, line) do
+    case line do
+      [x, y1, x, y2] -> Enum.zip(Stream.cycle([x]), y1..y2)
+      [x1, y, x2, y] -> Enum.zip(x1..x2, Stream.cycle([y]))
+      [x1, y1, x2, y2] -> Enum.zip(x1..x2, y1..y2)
     end
     |> Enum.reduce(field, fn {x, y}, field ->
       List.update_at(field, y, fn row ->
