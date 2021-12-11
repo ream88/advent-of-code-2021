@@ -34,11 +34,7 @@ end
 map =
   AdventOfCode2021.stream_input_file()
   |> Enum.map(fn line -> line |> String.codepoints() |> Enum.map(&String.to_integer/1) end)
-  |> Enum.with_index()
-  |> Enum.flat_map(fn {row, y} ->
-    row |> Enum.with_index() |> Enum.map(fn {point, x} -> {{x, y}, point} end)
-  end)
-  |> Map.new()
+  |> AdventOfCode2021.to_map()
 
 map
 |> Enum.reduce(%{}, fn {{x, y}, point}, acc ->
