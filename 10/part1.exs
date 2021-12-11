@@ -11,10 +11,7 @@ defmodule Day10.Part1 do
       {"(", _} -> parse(rest, [")" | stack])
       {"{", _} -> parse(rest, ["}" | stack])
       {"<", _} -> parse(rest, [">" | stack])
-      {"]", ["]" | stack]} -> parse(rest, stack)
-      {")", [")" | stack]} -> parse(rest, stack)
-      {"}", ["}" | stack]} -> parse(rest, stack)
-      {">", [">" | stack]} -> parse(rest, stack)
+      {char, [char | stack]} -> parse(rest, stack)
       {invalid, [expected | _]} -> {:error, {expected, invalid}}
     end
   end
